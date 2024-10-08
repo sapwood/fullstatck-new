@@ -62,6 +62,14 @@ app.post('/api/persons',(request,response)=>{
             error:'content missing'
         })
     }
+    const isDuplicated = persons.some(p=>(p.name.toLowerCase()===name.toLowerCase()))
+    
+
+    if (isDuplicated){
+        return response.status(400).json({
+            error:'name must be unique'
+        })
+    }
 
     const person={
         name:name,
