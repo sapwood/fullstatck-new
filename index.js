@@ -3,7 +3,7 @@ const app=express()
 app.use(express.json())
 
 
-const persons =[
+let persons =[
     { 
       "id": "1",
       "name": "Arto Hellas", 
@@ -25,6 +25,8 @@ const persons =[
       "number": "39-23-6423122"
     }
 ]
+
+
 
 app.get('/api/persons',(request,response)=>{
     response.json(persons)
@@ -49,6 +51,26 @@ app.delete('/api/persons/:id',(request,response)=>{
     const id= request.params.id
     const person= persons.find(p=>p.id===id)
     response.status(204).end()
+})
+
+app.post('/api/persons',(request,response)=>{
+    const name=request.body.name
+    const number=request.body.number
+
+    if (!(name&&number)){
+        return response.status(400).json({
+            error:'content missing'
+        })
+    }
+
+    const person={
+        name:name,
+        number:number,
+        id:Math.floor(Math.random()*100000)
+    }
+
+    persons= persons.concat(person)
+    response.json(person)
 })
 
 const PORT=3001
