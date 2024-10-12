@@ -78,26 +78,29 @@ app.post('/api/persons',(request,response)=>{
             error:'content missing'
         })
     }
-    const isDuplicated = persons.some(p=>(p.name.toLowerCase()===name.toLowerCase()))
+
+    // const isDuplicated = persons.some(p=>(p.name.toLowerCase()===name.toLowerCase()))
     
 
-    if (isDuplicated){
-        return response.status(400).json({
-            error:'name must be unique'
-        })
-    }
+    // if (isDuplicated){
+    //     return response.status(400).json({
+    //         error:'name must be unique'
+    //     })
+    // }
 
-    const person={
+    const person= new People({
         name:name,
         number:number,
-        id:Math.floor(Math.random()*100000)
-    }
-
-    persons= persons.concat(person)
-    response.json(person)
+        
+    })
+    person.save().then(p=>{
+        response.json(p)
+    })
+    
+    
 })
 
-const PORT=process.env.PORT || 3001
+const PORT=process.env.PORT
 
 app.listen(PORT,()=>{
     console.log(`Server running on port ${PORT}`)
