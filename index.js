@@ -95,7 +95,7 @@ app.put('/api/persons/:id',(request,response,next)=>{
         name:request.body.name,
         number:request.body.number,
     }
-    People.findByIdAndUpdate(id,person,{new:true})
+    People.findByIdAndUpdate(id,person,{new:true,runValidators:true,context:'query'})
     .then(p=>{
         return response.status(200).json(p)
     })
@@ -108,11 +108,11 @@ app.post('/api/persons',(request,response,next)=>{
     const name=request.body.name
     const number=request.body.number
 
-    if (!(name&&number)){
-        return response.status(400).json({
-            error:'content missing'
-        })
-    }
+    // if (!(name&&number)){
+    //     return response.status(400).json({
+    //         error:'content missing'
+    //     })
+    // }
 
 
     // const isDuplicated = persons.some(p=>(p.name.toLowerCase()===name.toLowerCase()))
@@ -147,7 +147,13 @@ app.use(unknownEndpoint)
 
 const errorHandler = (error,request,response,next)=>{
     console.log(error.message)
-    return response.send({error:error})
+    if (error.name==='CastError'){
+        return response.status(400).send({error:'malformatted id'})
+    }
+    else if(error.name==='ValidationError'){
+        console.log(`backend error is ${error}`)
+        return response.status(400).send({error:error.message})
+    }
 }
 app.use(errorHandler)
 const PORT=process.env.PORT
