@@ -63,13 +63,19 @@ app.get('/api/persons/:id',(request,response)=>{
     response.json(person)
 })
 
-app.delete('/api/persons/:id',(request,response)=>{
+app.delete('/api/persons/:id',(request,response,next)=>{
     const id= request.params.id
-    const person= persons.find(p=>p.id===id)
+    People.findByIdAndDelete(id)
+    .then(result=>{
+        return response.status(204).end()
+    })
+    .catch(error=>{
+        next(error)
+    })
     response.status(204).end()
 })
 
-app.post('/api/persons',(request,response)=>{
+app.post('/api/persons',(request,response,next)=>{
     const name=request.body.name
     const number=request.body.number
 
@@ -93,13 +99,26 @@ app.post('/api/persons',(request,response)=>{
         number:number,
         
     })
-    person.save().then(p=>{
+    person.save()
+    .then(p=>{
         response.json(p)
+    })
+    .catch(error=>{
+        next(error)
     })
     
     
 })
+const unknownEndpoint=(request,response,next)=>{
+    return response.status(404).send({error:'unkown endpoint'})
+}
+app.use(unknownEndpoint)
 
+const errorHandler = (error,request,response,next)=>{
+    console.log(error.message)
+    return response.send({error:error})
+}
+app.use(errorHandler)
 const PORT=process.env.PORT
 
 app.listen(PORT,()=>{
