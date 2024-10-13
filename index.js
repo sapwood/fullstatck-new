@@ -52,19 +52,29 @@ app.get('/api/persons',(request,response,next)=>{
     
 })
 
-app.get('/info',(request,response)=>{
-    const count= persons.length
+app.get('/info',(request,response,next)=>{
+    
     const time= Date()
-    response.send(`<p>Phonebook has info for ${count} people</p> <p>${time}</p>`)
+    People.find({})
+    .then(p=>{
+        return response.send(`<p>Phonebook has info for ${p.length} people</p> <p>${time}</p>`)
+    })
+    .catch(error=>{
+        next(error)
+    })
+    
 })
 
-app.get('/api/persons/:id',(request,response)=>{
+app.get('/api/persons/:id',(request,response,next)=>{
     const id = request.params.id
-    const person= persons.find(p=>p.id===id)
-    if (!person){
-        return response.status(404).end()
-    }
-    response.json(person)
+    People.findById(id)
+    .then(p=>{
+        return response.status(200).json(p)
+    })
+    .catch(error=>{
+        next(error)
+    })
+
 })
 
 app.delete('/api/persons/:id',(request,response,next)=>{
@@ -113,7 +123,7 @@ app.post('/api/persons',(request,response,next)=>{
     //         error:'name must be unique'
     //     })
     // }
-    
+
     const person= new People({
         name:name,
         number:number,
