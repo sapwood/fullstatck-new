@@ -40,10 +40,14 @@ let persons =[
 
 
 
-app.get('/api/persons',(request,response)=>{
+app.get('/api/persons',(request,response,next)=>{
 
-    People.find({}).then(person=>{
+    People.find({})
+    .then(person=>{
         response.json(person)
+    })
+    .catch(error=>{
+        next(error)
     })
     
 })
