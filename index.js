@@ -79,6 +79,21 @@ app.delete('/api/persons/:id',(request,response,next)=>{
     response.status(204).end()
 })
 
+app.put('/api/persons/:id',(request,response,next)=>{
+    const id =request.params.id
+    const person = {
+        name:request.body.name,
+        number:request.body.number,
+    }
+    People.findByIdAndUpdate(id,person,{new:true})
+    .then(p=>{
+        return response.status(200).json(p)
+    })
+    .catch(error=>{
+        next(error)
+    })
+})
+
 app.post('/api/persons',(request,response,next)=>{
     const name=request.body.name
     const number=request.body.number
@@ -89,6 +104,7 @@ app.post('/api/persons',(request,response,next)=>{
         })
     }
 
+
     // const isDuplicated = persons.some(p=>(p.name.toLowerCase()===name.toLowerCase()))
     
 
@@ -97,7 +113,7 @@ app.post('/api/persons',(request,response,next)=>{
     //         error:'name must be unique'
     //     })
     // }
-
+    
     const person= new People({
         name:name,
         number:number,
@@ -110,6 +126,7 @@ app.post('/api/persons',(request,response,next)=>{
     .catch(error=>{
         next(error)
     })
+
     
     
 })
