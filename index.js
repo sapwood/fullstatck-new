@@ -151,7 +151,7 @@ const errorHandler = (error,request,response,next)=>{
         return response.status(400).send({error:'malformatted id'})
     }
     else if(error.name==='ValidationError'){
-        console.log(`backend error is ${error}`)
+        
         return response.status(400).send({error:error.message})
     }
 }
